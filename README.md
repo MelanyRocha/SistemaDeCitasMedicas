@@ -8,7 +8,7 @@ Este proyecto implementa un sistema básico de gestión de citas médicas utiliz
 
 | Tipo             | Patrón Utilizado         |
 |------------------|--------------------------|
-| Creacional       | Singleton                |
+| Creacional       | Factory Method                |
 | Estructural      | Decorator                |
 | Comportamiento   | Observer                 |
 
@@ -25,87 +25,88 @@ El sistema simula la reserva de citas médicas en una clínica. Los usuarios (pa
 ```javascript
 // index.js
 
-// Patrón Creacional - Singleton
-class CitaManager {
-  constructor() {
-    if (CitaManager.instance) return CitaManager.instance;
-    this.citas = [];
-    CitaManager.instance = this;
-  }
-
-  agregarCita(cita) {
-    this.citas.push(cita);
-    console.log("Cita agregada:", cita);
-  }
-
-  getCitas() {
-    return this.citas;
-  }
+// Factory Method - Patrón Creacional
+class Cita {
+    constructor(paciente, doctor, fecha) {
+        this.paciente = paciente;
+        this.doctor = doctor;
+        this.fecha = fecha;
+    }
 }
 
-// Patrón Estructural - Decorator
-class Notificador {
-  enviar(mensaje) {
-    console.log("Notificación:", mensaje);
-  }
+class CitaFactory {
+    crearCita(paciente, doctor, fecha) {
+        return new Cita(paciente, doctor, fecha);
+    }
 }
 
-class NotificadorConFecha {
-  constructor(notificadorOriginal) {
-    this.notificadorOriginal = notificadorOriginal;
-  }
+// Observer - Patrón de Comportamiento
+class Subject {
+    constructor() {
+        this.observadores = [];
+    }
 
-  enviar(mensaje) {
-    const fecha = new Date().toLocaleString();
-    this.notificadorOriginal.enviar(`[${fecha}] ${mensaje}`);
-  }
+    registrarObservador(obs) {
+        this.observadores.push(obs);
+    }
+
+    notificar(cita) {
+        this.observadores.forEach(obs => obs.actualizar(cita));
+    }
 }
 
-// Patrón de Comportamiento - Observer
-class Observador {
-  actualizar(evento) {
-    console.log("Observador recibió evento:", evento);
-  }
+class EmailObserver {
+    actualizar(cita) {
+        console.log(`Correo enviado a ${cita.paciente} para confirmar cita con Dr. ${cita.doctor} el ${cita.fecha}`);
+    }
 }
 
-class Sujeto {
-  constructor() {
-    this.observadores = [];
-  }
+class SMSObserver {
+    actualizar(cita) {
+        console.log(`SMS enviado a ${cita.paciente} para confirmar cita con Dr. ${cita.doctor} el ${cita.fecha}`);
+    }
+}
 
-  suscribir(obs) {
-    this.observadores.push(obs);
-  }
+// Decorator - Patrón Estructural
+class ServicioBasico {
+    agendar(cita) {
+        console.log(`Cita agendada para ${cita.paciente} con Dr. ${cita.doctor} el ${cita.fecha}`);
+    }
+}
 
-  notificar(evento) {
-    this.observadores.forEach(o => o.actualizar(evento));
-  }
+class ServicioConRecordatorio {
+    constructor(servicio) {
+        this.servicio = servicio;
+    }
+
+    agendar(cita) {
+        this.servicio.agendar(cita);
+        console.log(`Se envió recordatorio adicional para ${cita.paciente}`);
+    }
 }
 
 // Simulación del sistema
-const gestor = new CitaManager();
-const notificador = new NotificadorConFecha(new Notificador());
-const eventos = new Sujeto();
-const observador1 = new Observador();
-const observador2 = new Observador();
+const factory = new CitaFactory();
+const cita = factory.crearCita("Melany", "Juan Pérez", "2025-05-12");
 
-eventos.suscribir(observador1);
-eventos.suscribir(observador2);
+const servicio = new ServicioConRecordatorio(new ServicioBasico());
+servicio.agendar(cita);
 
-// Crear una cita
-const cita = { paciente: "Ana López", medico: "Dra. Pérez", fecha: "2025-05-12 10:00" };
-gestor.agregarCita(cita);
-notificador.enviar("Nueva cita agendada para Ana López");
-eventos.notificar("Se agendó una nueva cita");
+const notificador = new Subject();
+notificador.registrarObservador(new EmailObserver());
+notificador.registrarObservador(new SMSObserver());
+
+notificador.notificar(cita);
+
 ```
 
 ---
 
 ## 💡 Explicación de la razón de cada patrón
 
-- **Singleton (CitaManager)**: Se garantiza una única instancia para manejar todas las citas, evitando inconsistencias o duplicidad.
-- **Decorator (NotificadorConFecha)**: Se extiende el comportamiento del notificador original sin modificar su estructura, añadiendo la fecha actual al mensaje.
-- **Observer (Sujeto y Observadores)**: Permite que múltiples partes del sistema reaccionen automáticamente cuando se agenda una cita (como logs, interfaces, etc.).
+- **Factory Method (Creacional): Se usó para encapsular la creación de citas médicas. Esto permite modificar fácilmente el proceso de creación sin afectar el resto del sistema.
+- **Decorator (Estructural): Permite añadir funcionalidades (como recordatorios) al proceso de agendar citas sin modificar la clase original. Así, se respetan los principios de extensión sin modificación.
+- **Observer (Comportamiento): Se utilizó para notificar automáticamente a los pacientes cada vez que se crea una cita. Al implementar observadores como Email y SMS, se pueden agregar o quitar sin alterar el sistema principal.
 
 ---
 
