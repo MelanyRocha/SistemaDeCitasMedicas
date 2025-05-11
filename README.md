@@ -16,7 +16,7 @@ Este proyecto implementa un sistema básico de gestión de citas médicas utiliz
 
 ## 📝 Explicación del Caso de Uso
 
-El sistema simula la reserva de citas médicas en una clínica. Los usuarios (pacientes) pueden agendar citas que serán gestionadas por una única instancia del gestor (Singleton). Se permite notificar de forma extendida mediante decoradores, y se integra un sistema de suscripción (Observer) para que los módulos reaccionen ante eventos como la creación de una nueva cita.
+El sistema permite agendar citas médicas a través de un servicio que genera objetos de tipo `Cita` (Factory Method). Estas citas se pueden extender con funcionalidades adicionales, como el envío de recordatorios (Decorator). Además, se implementa un sistema de notificaciones para alertar por diferentes medios a los pacientes sobre su cita (Observer), mostrando así una solución modular, flexible y escalable.
 
 ---
 
@@ -104,9 +104,9 @@ notificador.notificar(cita);
 
 ## 💡 Explicación de la razón de cada patrón
 
-- **Factory Method (Creacional): Se usó para encapsular la creación de citas médicas. Esto permite modificar fácilmente el proceso de creación sin afectar el resto del sistema.
-- **Decorator (Estructural): Permite añadir funcionalidades (como recordatorios) al proceso de agendar citas sin modificar la clase original. Así, se respetan los principios de extensión sin modificación.
-- **Observer (Comportamiento): Se utilizó para notificar automáticamente a los pacientes cada vez que se crea una cita. Al implementar observadores como Email y SMS, se pueden agregar o quitar sin alterar el sistema principal.
+- **Factory Method (Creacional):** Se usó para encapsular la creación de citas médicas. Esto permite modificar fácilmente el proceso de creación sin afectar el resto del sistema.
+- **Decorator (Estructural):** Permite añadir funcionalidades (como recordatorios) al proceso de agendar citas sin modificar la clase original. Así, se respetan los principios de extensión sin modificación.
+- **Observer (Comportamiento):** Se utilizó para notificar automáticamente a los pacientes cada vez que se crea una cita. Al implementar observadores como Email y SMS, se pueden agregar o quitar sin alterar el sistema principal.
 
 ---
 
@@ -131,12 +131,21 @@ node index.js
 
 4. **Salida esperada:**
 
-- Se imprime la cita agendada.
-- Se muestra el mensaje notificado con fecha.
-- Se registran los observadores reaccionando al evento.
+- Se imprime en consola la cita agendada.
+- Se muestra el recordatorio adicional.
+- Se envían notificaciones simuladas por correo y SMS.
 
 ---
 
 ## 🔗 Link del Repositorio Git
 
 [https://github.com/MelanyRocha/SistemaDeCitasMedicas.git](https://github.com/MelanyRocha/SistemaDeCitasMedicas.git)
+
+---
+
+## 👩‍💻 Autora
+
+**Melany Rocha Ferrufino**  
+Estudiante de Ingeniería Informática 
+Actividad académica sobre Patrones de Diseño
+
