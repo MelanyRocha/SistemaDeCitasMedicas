@@ -147,5 +147,6 @@ node index.js
 
 **Melany Rocha Ferrufino**  
 Estudiante de Ingeniería Informática 
+
 Actividad académica sobre Patrones de Diseño
 
